@@ -1,0 +1,272 @@
+/*Colour of text in blue: 337AB7*/
+
+/*Ids*/
+#login_button{
+    float: right;
+}
+#mainView{
+    margin-bottom: 100px;
+}
+
+/*Classes*/
+.row.content{
+    height: 100%;
+}
+.sidenav{
+    padding-top: 20px;
+    height: 100%;
+}
+.spacing{
+    padding-top: 5px;
+}
+.textWidth{
+    width: 170px;
+}
+.scrollable-menu {
+    height: auto;
+    max-height: 100px;
+    overflow-x: hidden;
+}
+.checkbox_center{
+    vertical-align: middle;
+}
+.center{
+    text-align: center;
+}
+.checkbox {
+    position: relative;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.well, .navbar{
+     background-color: #e5e5e5;
+ }
+
+/*Spinner*/
+.spinner_load{
+    font-size:48px;
+    color:#006dcc
+}
+/*Scrolling*/
+.table_scroll{
+    width: 100%;
+}
+.thead_scroll, .tbody_scroll, .tr_scroll, .td_scroll, .th_scroll{
+    display: block;
+}
+.tr_scroll:after{
+    content: '';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.thead_scroll .th_scroll{
+    height: 30px;
+    width: 100%;
+}
+.tbody_scroll{
+    height: 250px;
+    overflow-y: auto;
+}
+.tbody_scroll .td_scroll, .thead_scroll .td_scroll{
+    width: 33.25%;
+    float: left;
+}
+.scroll_div{
+    overflow-y: auto;
+    height: 400px;
+    margin-bottom: 25px;
+}
+.scroll_info_div{
+    overflow-y: auto;
+    height: 635px;
+}
+
+/*League Tournament Competitor Table*/
+.table_leagueComp_scroll{
+    width: 100%;
+}
+.thead_leagueComp_scroll, .tbody_leagueComp_scroll, .tr_leagueComp_scroll, .td_leagueComp_scroll, .th_leagueComp_scroll{
+    display: block;
+}
+.tr_leagueComp_scroll:after{
+    content: '';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.thead_leagueComp_scroll .th_leagueComp_scroll{
+    height: 30px;
+    width: 100%;
+}
+.tbody_leagueComp_scroll{
+    height: 400px;
+    overflow-y: auto;
+}
+.tbody_leagueComp_scroll .td_leagueComp_scroll, .thead_leagueComp_scroll .td_leagueComp_scroll{
+    width: 30%;
+    float: left;
+}
+
+/*Single elimination bracket design classes*/
+.bracketTable{
+    width: 100%;
+}
+.bracketLineA{
+    border-top: 2px solid;
+    border-right: 2px solid;
+    width: 80%;
+    height: 25%;
+    float: left;
+    position: absolute;
+    top: 25%;
+}
+.bracketLineB{
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+    width:80%;
+    height:25%;
+    float: left;
+    position:absolute;
+    top:50%;
+}
+.bracketLineC{
+    border-top: 2px solid;
+    width: 20%;
+    margin-left: 80%;
+    float: right;
+    position:absolute;
+}
+.input-number{
+    width: 50px;
+}
+.mandatory_fields{
+    color: red;
+}
+
+
+/*Double elimination classes*/
+.btn-group div.dropdown{
+    display: inline-block;;
+}
+.btn-push-right{
+    margin-left: 500px;
+}
+
+/*Round Robin, Multilevel, Tournament Standings classes*/
+.fixed_table{
+    width: 100%;
+}
+.fixed_table,
+.fixed_table>thead,
+.fixed_table>tbody,
+.fixed_table>thead>tr,
+.fixed_table>tbody>tr,
+.fixed_table>thead>tr>th,
+.fixed_table>tbody>td {
+    display: block;
+}
+
+.fixed_table>thead>tr:after,
+.fixed_table>tbody>tr:after {
+    content:' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.fixed_table>tbody {
+    overflow-y: scroll;
+    height: 400px;
+}
+.fixed_table>thead {
+    overflow-y: scroll;
+}
+.fixed_table>thead::-webkit-scrollbar {
+    background-color: inherit;
+}
+.fixed_table>thead>tr>th:after,
+.fixed_table>tbody>tr>td:after {
+    content:' ';
+    display: table-cell;
+    visibility: hidden;
+    clear: both;
+}
+.fixed_table>thead tr th,
+.fixed_table>tbody tr td {
+    float: left;
+    word-wrap:break-word;
+}
+
+/*League Standings classes*/
+.league_fixed_table{
+    width: 100%;
+}
+.league_fixed_table,
+.league_fixed_table>thead,
+.league_fixed_table>tbody,
+.league_fixed_table>thead>tr,
+.league_fixed_table>tbody>tr,
+.league_fixed_table>thead>tr>th,
+.league_fixed_table>tbody>td {
+    display: block;
+}
+
+.league_fixed_table>thead>tr:after,
+.league_fixed_table>tbody>tr:after {
+    content:' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.league_fixed_table>tbody {
+    overflow-y: scroll;
+    height: 400px;
+}
+.league_fixed_table>thead {
+    overflow-y: scroll;
+}
+.league_fixed_table>thead::-webkit-scrollbar {
+    background-color: inherit;
+}
+.league_fixed_table>thead>tr>th:after,
+.league_fixed_table>tbody>tr>td:after {
+    content:' ';
+    display: table-cell;
+    visibility: hidden;
+    clear: both;
+}
+.league_fixed_table>thead tr th,
+.league_fixed_table>tbody tr td {
+    float: left;
+    word-wrap:break-word;
+}
+
+/*structure*/
+html {
+    position: relative;
+    min-height: 100%;
+    height: 100%;
+}
+body {
+    margin: 0 0 50px;
+    padding: 25px;
+    height: 100%;
+}
+footer{
+    bottom: 0;
+    height: 75px;
+    left: 0;
+    position: relative;
+    margin-top: 30px;
+    clear: both;
+    width: 100%;
+}
+footer p{
+    padding-top: 0px;
+}
+a:hover{
+    cursor: pointer;
+}
+

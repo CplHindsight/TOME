@@ -1,0 +1,238 @@
+<div ng-controller="league_tournamentSummaryController as ltSumCtrl">
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <!--Navbar-->
+            <div class="col-md-2 sidenav well">
+                <div class="row">
+                    <h4><a href="/league/tournament/{{ltSumCtrl.url}}"
+                           ng-click="ltSumCtrl.viewComp = false">Tournament Summary</a></h4>
+                    <!--TODO: Rename button-->
+                    <h4 ng-show="ltSumCtrl.tournamentHasStarted && (ltSumCtrl.isOrganizer || ltSumCtrl.isCoordinator())">
+                        <a ng-click="ltSumCtrl.viewCompetitors()">Select Tournament Competitors</a>
+                    </h4>
+                    <h4 ng-hide="ltSumCtrl.tournamentHasStarted"><a href="/tournament/{{ltSumCtrl.url}}/standings">Standings</a></h4>
+                    <br>
+                    <h4><a href="/league/{{ltSumCtrl.league.URL}}">Return to League</a></h4>
+                </div>
+                <br>
+                <div ng-if="currentUser" class="row">
+                    <h4><a href="/dashboard">Main Dashboard</a></h4>
+                </div>
+            </div>
+            <div class="col-md-10 text-left">
+                <!--Tournament Summary View-->
+                <div ng-if="!ltSumCtrl.viewComp">
+                    <div class="row content">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h1><strong>Summary</strong></h1>
+                                </div>
+                                <div class="col-md-4" ng-show="ltSumCtrl.badCoordinatorPassword">
+                                    <div class="alert alert-warning">
+                                        You have entered an incorrect password.
+                                    </div>
+                                </div>
+                                <div class="pull-right well" ng-if="ltSumCtrl.isOrganizer">
+                                    <span class="">
+                                        <strong>Coordinator Password:</strong>
+                                        {{ltSumCtrl.findTournament.coordinatorPassword}}
+                                    </span>&nbsp;&nbsp;&nbsp;
+                                    <span class="">
+                                        <strong>Tournament URL:</strong>
+                                        {{ltSumCtrl.findTournament.URL}}
+                                    </span>
+                                </div>
+                                <div>
+                                    <div class="col-md-3 pull-right"
+                                         ng-if="!ltSumCtrl.isOrganizer && !ltSumCtrl.isCoordinator()">
+                                        <div class="row well">
+                                            <div style="padding-left: 0px;" class="col-md-9">
+                                                <label>Enter Coordinator Password:</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input style="width: 195px;" type="password"
+                                                           ng-model="ltSumCtrl.coordinatorPasswordEntered"
+                                                           ng-change="ltSumCtrl.badCoordinatorPassword = false;"
+                                                           class="form-control textWidth"/>
+                                                </div>
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">
+                                                    <button type="submit" ng-click="ltSumCtrl.loginCoordinator()"
+                                                            class="btn-success btn-sm">
+                                                        <strong>Sign In</strong>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row content">
+                        <div class="col-md-6">
+                            <h3><strong>Tournament Details</strong></h3>
+                            <table class="table table-hover table-condensed table-responsive">
+                                <thead>
+                                <tr>
+                                    <td><strong>Name</strong></td>
+                                    <td><strong>Maximum # of Competitors</strong></td>
+                                    <td><strong># of Enrolled Competitors</strong></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>{{ltSumCtrl.findTournament.name}}</td>
+                                    <td>{{ltSumCtrl.findTournament.maxCompetitors}}</td>
+                                    <td>{{ltSumCtrl.tournamentCompetitorsCount}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h3><strong>Additional Stage Details</strong></h3>
+                            <table class="table table-hover table-condensed table-responsive">
+                                <thead>
+                                <tr>
+                                    <td><strong>Stage #</strong></td>
+                                    <td><strong>Type</strong></td>
+                                    <td ng-if="ltSumCtrl.checkStageType()"><strong>Rounds</strong></td>
+                                    <td ng-if="ltSumCtrl.checkStageCriteria()"><strong>Cutoff</strong></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="stage in ltSumCtrl.findStages">
+                                    <td>{{stage.stageNumber}}</td>
+                                    <td>
+                                        <span ng-hide="ltSumCtrl.tournamentCurrentStage < stage.stageNumber" ng-click="ltSumCtrl.goToStage(stage.stageNumber)"><a>{{stage.type}}</a></span>
+                                        <span ng-show="ltSumCtrl.tournamentCurrentStage < stage.stageNumber">{{stage.type}}</span>
+                                    </td>
+                                    <td ng-if="ltSumCtrl.checkStageType()">
+                                        {{ltSumCtrl.outputTypeCriteria(stage)}}
+                                    </td>
+                                    <td ng-if="ltSumCtrl.checkStageCriteria()">
+                                        {{ltSumCtrl.outputStageCriteria(stage)}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--End of Tournament Summary-->
+                <!--Tournament Competitors-->
+                <div ng-if="ltSumCtrl.viewComp">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12" ng-if="!ltSumCtrl.hasLeagueCompetitors">
+                                <div class="row">
+                                    <div class="alert alert-warning">
+                                        <strong>Note:</strong><br><br>
+                                        Please ensure you have loaded competitors into the league.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" ng-if="ltSumCtrl.hasLeagueCompetitors">
+                                <h2><strong>Enroll Tournament Competitors</strong></h2>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h4><strong>Current Competitors Enrolled in League:</strong>
+                                            {{ltSumCtrl.leagueCompetitorsCount}}</h4>
+                                        <h4>
+                                            <strong>
+                                                Current Competitors Enrolled in
+                                                {{ltSumCtrl.tournament.name}}:
+                                            </strong>
+                                            {{ltSumCtrl.tournamentCompetitorsCount}}
+                                        </h4>
+                                        <h4>
+                                            <strong>
+                                                Maximum # of Competitors Allowed in {{ltSumCtrl.tournament.name}}:
+                                            </strong>
+                                            {{ltSumCtrl.findTournament.maxCompetitors}}
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="row" ng-if="ltSumCtrl.maxCompReached()">
+                                    <div class="alert alert-warning">
+                                        <strong>Warning:</strong>
+                                        {{ltSumCtrl.tournament.name}} is at full competitor capacity.
+                                    </div>
+                                </div>
+                                <br><br>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-hover table-responsive table_leagueComp_scroll">
+                                            <thead class="thead_leagueComp_scroll">
+                                                <tr class="tr_leagueComp_scroll">
+                                                    <td class="td_leagueComp_scroll"><strong>Competitor</strong></td>
+                                                    <td class="td_leagueComp_scroll"><strong>Email</strong></td>
+                                                    <td class="td_leagueComp_scroll center"><strong>Enrolled</strong></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="tbody_leagueComp_scroll">
+                                                <tr class="tr_leagueComp_scroll"
+                                                    ng-repeat="competitor in ltSumCtrl.findLeagueCompetitors">
+                                                    <td class="td_leagueComp_scroll">{{competitor.name}}</td>
+                                                    <td class="td_leagueComp_scroll">{{competitor.email}}</td>
+                                                    <td class="td_leagueComp_scroll center">
+                                                        <button ng-if="!ltSumCtrl.findEnrolledCompetitor(competitor)"
+                                                                ng-disabled="competitor.enrolled"
+                                                                ng-click="ltSumCtrl.updateTournamentCompetitor(false, competitor)"
+                                                                class="btn btn-sm btn-success">
+                                                            Enroll
+                                                        </button>
+                                                        <button ng-if="ltSumCtrl.findEnrolledCompetitor(competitor)"
+                                                                ng-click="ltSumCtrl.updateTournamentCompetitor(true, competitor)"
+                                                                class="btn btn-sm btn-danger">
+                                                            Withdraw
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <button ng-click="ltSumCtrl.viewComp = false;"
+                                                class="btn-primary btn-lg pull-right">
+                                            Return to Tournament Summary
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End of Tournament Competitors-->
+            <br><br>
+        </div>
+        <br><br>
+        <!--Generate Tournament Button-->
+        <div class="row content" ng-if="!ltSumCtrl.viewComp">
+            <div class="col-md-12" ng-if="!ltSumCtrl.checkTournamentStarted() && (ltSumCtrl.isOrganizer || ltSumCtrl.isCoordinator())">
+                <button ng-show="ltSumCtrl.tournamentCompetitorsCount === 0"
+                        ng-click="ltSumCtrl.viewCompetitors()"
+                        class="btn-success btn-lg pull-right">
+                    Add Competitors
+                </button>
+                <button ng-hide="ltSumCtrl.tournamentCompetitorsCount === 0"
+                        ng-click="ltSumCtrl.generateTournament()"
+                        class="btn-success btn-lg pull-right">
+                    Generate Tournament
+                </button>
+            </div>
+            <div class="col-md-12" ng-if="ltSumCtrl.checkTournamentStarted()">
+                <button ng-click="ltSumCtrl.generateTournament()"
+                        class="btn-success btn-lg pull-right">
+                    View Tournament
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

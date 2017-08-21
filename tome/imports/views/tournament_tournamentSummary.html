@@ -1,0 +1,309 @@
+<div ng-controller="tournament_tournamentSummaryController as ttSumCtrl">
+    <div class="container-fluid text-center">
+        <div class="row content">
+<!--Navbar-->
+            <div class="col-md-2 sidenav well">
+                <div class="row">
+                    <h4><a href="/tournament/{{ttSumCtrl.url}}"
+                           ng-click="ttSumCtrl.viewComp = false">Tournament Summary</a></h4>
+                    <!--TODO: Rename button-->
+                    <h4 ng-show="ttSumCtrl.tournamentHasStarted && (ttSumCtrl.isOrganizer || ttSumCtrl.isCoordinator())">
+                        <a ng-click="ttSumCtrl.viewCompetitors()">Control Tournament Competitors</a>
+                    </h4>
+                    <h4 ng-hide="ttSumCtrl.tournamentHasStarted"><a href="/tournament/{{ttSumCtrl.url}}/standings">Standings</a></h4>
+                </div>
+                <br>
+                <div class="row">
+                    <h4><a href="/dashboard">Main Dashboard</a></h4>
+                </div>
+            </div>
+            <div class="col-md-10 text-left">
+<!--Tournament Summary View-->
+                <div ng-if="!ttSumCtrl.viewComp">
+                    <div class="row content">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h1><strong>Summary</strong></h1>
+                                </div>
+                                <div class="col-md-4" ng-show="ttSumCtrl.badCoordinatorPassword">
+                                    <div class="alert alert-warning">
+                                        You have entered an incorrect password.
+                                    </div>
+                                </div>
+                                <div class="pull-right well" ng-if="ttSumCtrl.isOrganizer">
+                                    <span class="">
+                                        <strong>Coordinator Password:</strong>
+                                        {{ttSumCtrl.findTournament.coordinatorPassword}}
+                                    </span>&nbsp;&nbsp;&nbsp;
+                                    <span class="">
+                                        <strong>Tournament URL:</strong>
+                                        {{ttSumCtrl.findTournament.URL}}
+                                    </span>
+                                </div>
+                                <div>
+                                    <div class="col-md-3 pull-right"
+                                         ng-if="!ttSumCtrl.isCoordinator() && !ttSumCtrl.isOrganizer" >
+                                        <div class="row well">
+                                            <div style="padding-left: 0px;" class="col-md-9">
+                                                <label>Enter Coordinator Password:</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input style="width: 195px;" type="password"
+                                                           ng-change="ttSumCtrl.badCoordinatorPassword = false;"
+                                                           ng-model="ttSumCtrl.coordinatorPasswordEntered"
+                                                           class="form-control textWidth"/>
+                                                </div>
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-4">
+                                                    <button type="submit" ng-click="ttSumCtrl.loginCoordinator()"
+                                                            class="btn-success btn-sm">
+                                                        <strong>Sign In</strong>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row content">
+                        <div class="col-md-6">
+                            <h3><strong>Tournament Details</strong></h3>
+                            <table class="table table-hover table-condensed table-responsive">
+                                <thead>
+                                    <tr>
+                                        <td><strong>Name</strong></td>
+                                        <td><strong>Maximum # of Competitors</strong></td>
+                                        <td><strong># of Enrolled Competitors</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ttSumCtrl.findTournament.name}}</td>
+                                        <td>{{ttSumCtrl.findTournament.maxCompetitors}}</td>
+                                        <td>{{ttSumCtrl.tournamentCompetitorsCount}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h3><strong>Additional Stage Details</strong></h3>
+                            <table class="table table-hover table-condensed table-responsive">
+                                <thead>
+                                    <tr>
+                                        <td><strong>Stage #</strong></td>
+                                        <td><strong>Type</strong></td>
+                                        <td ng-if="ttSumCtrl.checkStageType()"><strong>Rounds</strong></td>
+                                        <td ng-if="ttSumCtrl.checkStageCriteria()"><strong>Cutoff</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="stage in ttSumCtrl.findStages">
+                                        <td>{{stage.stageNumber}}</td>
+                                        <td>
+                                            <span ng-hide="ttSumCtrl.tournamentCurrentStage < stage.stageNumber" ng-click="ttSumCtrl.goToStage(stage.stageNumber)"><a>{{stage.type}}</a></span>
+                                            <span ng-show="ttSumCtrl.tournamentCurrentStage < stage.stageNumber">{{stage.type}}</span>
+                                        </td>
+                                        <td ng-if="ttSumCtrl.checkStageType()">
+                                            {{ttSumCtrl.outputTypeCriteria(stage)}}
+                                        </td>
+                                        <td ng-if="ttSumCtrl.checkStageCriteria()">
+                                            {{ttSumCtrl.outputStageCriteria(stage)}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+<!--End of Tournament Summary-->
+<!--Tournament Competitors-->
+                <div ng-if="ttSumCtrl.viewComp">
+                    <h2><strong>Tournament Competitors</strong></h2>
+                    <div ng-if="ttSumCtrl.emailWarning">
+                        <br>
+                        <div class="alert alert-warning">
+                            <strong>Warning:</strong><br>
+                            The following email(s) already exist: <br><br>
+                            {{ttSumCtrl.emailOutput}} <br><br>
+                            The competitor(s) with the above email(s) will not be added to the tournament.
+                        </div>
+                    </div>
+                    <div ng-if="ttSumCtrl.compWarning">
+                        <br>
+                        <div class="alert alert-warning">
+                            <strong>Warning:</strong><br>
+                            The following email(s) were not added: <br><br>
+                            {{ttSumCtrl.compOutput}} <br><br>
+                            The maximum limit of competitors for this tournament has been reached.
+                        </div>
+                    </div>
+                    <div ng-if="ttSumCtrl.editWarning">
+                        <div class="alert alert-warning">
+                            <strong>Warning:</strong><br><br>
+                            Please fill out all required fields.
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form ng-submit="ttSumCtrl.addCompetitor()" class="form-horizontal">
+                                    <div class="col-md-12">
+                                        <label class="control-label">Name:</label>
+                                        <input type="text" ng-model="ttSumCtrl.compName" class="form-control"/>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="control-label">Email:</label>
+                                        <input type="email" ng-model="ttSumCtrl.compEmail" class="form-control"/>
+                                    </div>
+                                    <div class="col-md-12 spacing"></div>
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn-primary form-control"
+                                                ng-click="ttSumCtrl.emailWarning = false; ttSumCtrl.emailOutput = '';
+                                                ttSumCtrl.compWarning = false; ttSumCtrl.compOutput = '';">
+                                            Add New Competitor
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <form ng-submit="ttSumCtrl.uploadCompFile()" name="form.csvComp"
+                                      class="form-horizontal">
+                                    <div class="col-md-12">
+                                        <label class="control-label">Competitor CSV File: </label>
+                                        <input type="file" class="form-control" id="compFileUpload"
+                                               onchange="angular.element(this).scope().handleFiles(this.files)"
+                                               accept=".csv"/>
+                                    </div>
+                                    <div class="col-md-12 spacing"></div>
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn-primary form-control"
+                                                ng-click="ttSumCtrl.emailWarning = false; ttSumCtrl.emailOutput = '';
+                                                ttSumCtrl.compWarning = false; ttSumCtrl.compOutput = '';">
+                                            Upload File
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4><strong>Current Competitors Enrolled:</strong>
+                                    {{ttSumCtrl.tournamentCompetitorsCount}}</h4>
+                                <h4><strong>Maximum Tournament Competitors Allowed:</strong>
+                                    {{ttSumCtrl.findTournament.maxCompetitors}}</h4>
+                            </div>
+                            <div class="col-md-6 alert alert-warning" ng-if="ttSumCtrl.editCompetitor">
+                                <strong>Note:</strong>
+                                Please confirm any changes before editing another competitor.
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="row">
+                            <div class="col-md-12" ng-if="!ttSumCtrl.hasTournamentCompetitors
+                            && ttSumCtrl.competitorLoaded">
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <i class="fa fa-spinner fa-spin spinner_load"></i>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <h3>***Please wait while the competitors load***</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" ng-if="ttSumCtrl.hasTournamentCompetitors">
+                                <table class="table table-hover table-responsive table_scroll">
+                                    <thead class="thead_scroll">
+                                        <tr class="tr_scroll">
+                                            <td class="td_scroll"><strong>Competitor</strong></td>
+                                            <td class="td_scroll"><strong>Email</strong></td>
+                                            <td class="td_scroll"><strong>Options</strong></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tbody_scroll">
+                                        <tr class="tr_scroll"
+                                            ng-repeat="competitor in ttSumCtrl.findTournamentCompetitors">
+                                            <td class="td_scroll" ng-if="!competitor.toggle">{{competitor.name}}</td>
+                                            <td class="td_scroll" ng-if="!competitor.toggle">{{competitor.email}}</td>
+                                            <td class="td_scroll" ng-if="competitor.toggle">
+                                                <input  type="text" placeholder="{{competitor.name}}"
+                                                        value="{{competitor.name}}"
+                                                        ng-model="ttSumCtrl.compEditName"> *
+                                            </td>
+                                            <td class="td_scroll" ng-if="competitor.toggle">
+                                                <input type="email" placeholder="{{competitor.email}}"
+                                                       value="{{competitor.email}}"
+                                                       ng-model="ttSumCtrl.compEditEmail"> *
+                                            </td>
+                                            <td class="td_scroll">
+                                                <button ng-if="competitor.toggle"
+                                                        ng-click="ttSumCtrl.editComp(competitor)"
+                                                        class="btn-success">
+                                                    Accept
+                                                </button>
+                                                <button ng-if="competitor.toggle"
+                                                        ng-click="ttSumCtrl.toggleEdit(competitor)"
+                                                        class="btn-warning">
+                                                    Cancel
+                                                </button>
+                                                <button ng-if="!competitor.toggle"
+                                                        ng-disabled="ttSumCtrl.editCompetitor"
+                                                        ng-click="ttSumCtrl.toggleEdit(competitor)"
+                                                        class="btn-info">
+                                                    Edit
+                                                </button>&nbsp;
+                                                <button ng-if="!competitor.toggle"
+                                                        ng-disabled="ttSumCtrl.editCompetitor"
+                                                        ng-click="ttSumCtrl.removeCompetitor(competitor._id)"
+                                                        class="btn-danger">
+                                                    Remove
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <button ng-click="ttSumCtrl.hideCompetitors(); ttSumCtrl.emailWarning = false;
+                            ttSumCtrl.emailOutput = ''; ttSumCtrl.compWarning = false; ttSumCtrl.compOutput = '';"
+                                    class="btn-primary btn-lg pull-right">
+                                Return to Tournament Summary
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--End of Tournament Competitors-->
+            <br><br>
+        </div>
+        <br><br>
+<!--Generate Tournament Button-->
+        <div class="row content" ng-if="!ttSumCtrl.viewComp">
+            <div class="col-md-12" ng-if="!ttSumCtrl.checkTournamentStarted() && (ttSumCtrl.isOrganizer || ttSumCtrl.isCoordinator())">
+                <button ng-show="ttSumCtrl.tournamentCompetitorsCount === 0" ng-click="ttSumCtrl.viewCompetitors()" class="btn-success btn-lg pull-right">
+                    Add Competitors
+                </button>
+                <button ng-hide="ttSumCtrl.tournamentCompetitorsCount === 0" ng-click="ttSumCtrl.generateTournament()"
+                        class="btn-success btn-lg pull-right">
+                    Generate Tournament
+                </button>
+            </div>
+            <div class="col-md-12" ng-if="ttSumCtrl.checkTournamentStarted()">
+                <button ng-click="ttSumCtrl.generateTournament()"
+                        class="btn-success btn-lg pull-right">
+                    View Tournament
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

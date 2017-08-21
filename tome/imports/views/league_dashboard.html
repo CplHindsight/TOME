@@ -1,0 +1,291 @@
+<div ng-controller="leagueController as leagueCtrl">
+    <div class="container-fluid text-center">
+        <div class="row content">
+<!--Navbar-->
+            <div class="col-md-2 sidenav well">
+                <div class="row">
+                    <h4><a href="/league/{{leagueCtrl.url}}/createLeagueTournament">Create League Tournament</a></h4>
+                    <h4><a ng-click="leagueCtrl.viewCompetitors()">Control League Competitors</a></h4>
+                    <h4><a ng-click="leagueCtrl.viewStandings()">View League Standings</a></h4>
+                </div>
+                <br>
+                <div class="row">
+                    <h4><a ng-click="leagueCtrl.hideCompetitors()">League Dashboard</a></h4>
+                    <h4 ng-if="currentUser"><a href="/dashboard">Main Dashboard</a></h4>
+                </div>
+            </div>
+            <div class="col-md-10 text-left">
+                <div class="container-fluid">
+                    <!--League Dashboard View-->
+                    <div ng-if="!leagueCtrl.viewComp && !leagueCtrl.standings">
+                        <div class="row content">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h1><strong>League Name: </strong>{{leagueCtrl.findLeague.name}}</h1>
+                                    </div>
+                                    <div class="pull-right well">
+                                    <span class="">
+                                        <strong>League URL:</strong>
+                                        {{leagueCtrl.findLeague.URL}}
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row content">
+                                <div class="col-md-6">
+                                    <br>
+                                    <h3>List of League Competitors</h3>
+                                    <table class="table table-striped table-responsive fixed_table">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-6"><strong>Name</strong></th>
+                                                <th class="col-md-6"><strong>Contact Info</strong></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="competitor in leagueCtrl.findLeagueCompetitors">
+                                                <td class="col-md-6">{{competitor.name}}</td>
+                                                <td class="col-md-6">{{competitor.email}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <br>
+                                    <h3>Recent Tournaments</h3>
+                                    <table class="table table-striped table-responsive fixed_table">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-4"><strong>Tournament Name</strong></th>
+                                                <th class="col-md-4"><strong>Date</strong></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="tournament in leagueCtrl.findLeagueTournaments">
+                                                <td class="col-md-4">
+                                                    <strong>
+                                                        <a href="league/tournament/{{tournament.URL}}">
+                                                            {{tournament.name}}
+                                                        </a>
+                                                    </strong>
+                                                </td>
+                                                <td class="col-md-4"
+                                                    ng-bind="tournament.dateLastActive | date: 'fullDate'"></td>
+                                                <td class="col-md-4" ng-if="tournament._id">
+                                                    <button ng-click="leagueCtrl.deleteTournament(tournament._id)"
+                                                            class="btn-danger pull-right">
+                                                        Delete Tournament
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End of League Dashboard View-->
+                    <!--League Competitors Functionality-->
+                    <div ng-if="leagueCtrl.viewComp && !leagueCtrl.standings">
+                        <h2><strong>League Competitors</strong></h2>
+                        <div ng-if="leagueCtrl.emailWarning">
+                            <br>
+                            <div class="alert alert-warning">
+                                <strong>Warning:</strong><br>
+                                The following email(s) already exist: <br><br>
+                                {{leagueCtrl.emailOutput}} <br><br>
+                                The competitor(s) with the above email(s) will not be added to the league.
+                            </div>
+                        </div>
+                        <div ng-if="leagueCtrl.compWarning">
+                            <br>
+                            <div class="alert alert-warning">
+                                <strong>Warning:</strong><br>
+                                The following email(s) were not added: <br><br>
+                                {{leagueCtrl.compOutput}} <br><br>
+                                The maximum limit of competitors for this tournament has been reached.
+                            </div>
+                        </div>
+                        <div ng-if="leagueCtrl.editWarning">
+                            <div class="alert alert-warning">
+                                <strong>Warning:</strong><br><br>
+                                Please fill out all required fields.
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form ng-submit="leagueCtrl.addCompetitor()" class="form-horizontal">
+                                        <div class="col-md-12">
+                                            <label class="control-label">Name:</label>
+                                            <input type="text" ng-model="leagueCtrl.compName" class="form-control"/>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="control-label">Email:</label>
+                                            <input type="email" ng-model="leagueCtrl.compEmail" class="form-control"/>
+                                        </div>
+                                        <div class="col-md-12 spacing"></div>
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn-primary form-control"
+                                                    ng-click="leagueCtrl.emailWarning = false; leagueCtrl.emailOutput = '';
+                                                leagueCtrl.compWarning = false; leagueCtrl.compOutput = '';">
+                                                Add New Competitor
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form ng-submit="leagueCtrl.uploadCompFile()" name="form.csvComp"
+                                          class="form-horizontal">
+                                        <div class="col-md-12">
+                                            <label class="control-label">Competitor CSV File: </label>
+                                            <input type="file" class="form-control" id="compFileUpload"
+                                                   onchange="angular.element(this).scope().handleFiles(this.files)"
+                                                   accept=".csv"/>
+                                        </div>
+                                        <div class="col-md-12 spacing"></div>
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn-primary form-control"
+                                                    ng-click="leagueCtrl.emailWarning = false; leagueCtrl.emailOutput = '';
+                                                leagueCtrl.compWarning = false; leagueCtrl.compOutput = '';">
+                                                Upload File
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4><strong>Current Competitors Enrolled:</strong>
+                                        {{leagueCtrl.leagueCompetitorsCount}}</h4>
+                                    <h4><strong>Maximum League Competitors Allowed:</strong> 128</h4>
+                                </div>
+                                <div class="col-md-6 alert alert-warning" ng-if="leagueCtrl.editCompetitor">
+                                    <strong>Note:</strong>
+                                    Please confirm any changes before editing another competitor.
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class="row">
+                                <div class="col-md-12" ng-if="!leagueCtrl.hasLeagueCompetitors
+                            && leagueCtrl.competitorLoaded">
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <i class="fa fa-spinner fa-spin spinner_load"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <h3>***Please wait while the competitors load***</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-if="leagueCtrl.hasLeagueCompetitors">
+                                    <table class="table table-hover table-responsive table_scroll">
+                                        <thead class="thead_scroll">
+                                        <tr class="tr_scroll">
+                                            <td class="td_scroll"><strong>Competitor</strong></td>
+                                            <td class="td_scroll"><strong>Email</strong></td>
+                                            <td class="td_scroll"><strong>Options</strong></td>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="tbody_scroll">
+                                        <tr class="tr_scroll"
+                                            ng-repeat="competitor in leagueCtrl.findLeagueCompetitors">
+                                            <td class="td_scroll" ng-if="!competitor.toggle">{{competitor.name}}</td>
+                                            <td class="td_scroll" ng-if="!competitor.toggle">{{competitor.email}}</td>
+                                            <td class="td_scroll" ng-if="competitor.toggle">
+                                                <input  type="text" placeholder="{{competitor.name}}"
+                                                        value="{{competitor.name}}"
+                                                        ng-model="leagueCtrl.compEditName"> *
+                                            </td>
+                                            <td class="td_scroll" ng-if="competitor.toggle">
+                                                <input type="email" placeholder="{{competitor.email}}"
+                                                       value="{{competitor.email}}"
+                                                       ng-model="leagueCtrl.compEditEmail"> *
+                                            </td>
+                                            <td class="td_scroll">
+                                                <button ng-if="competitor.toggle"
+                                                        ng-click="leagueCtrl.editComp(competitor)"
+                                                        class="btn-success">
+                                                    Accept
+                                                </button>
+                                                <button ng-if="competitor.toggle"
+                                                        ng-click="leagueCtrl.toggleEdit(competitor)"
+                                                        class="btn-warning">
+                                                    Cancel
+                                                </button>
+                                                <button ng-if="!competitor.toggle"
+                                                        ng-disabled="leagueCtrl.editCompetitor"
+                                                        ng-click="leagueCtrl.toggleEdit(competitor)"
+                                                        class="btn-info">
+                                                    Edit
+                                                </button>&nbsp;
+                                                <button ng-if="!competitor.toggle"
+                                                        ng-disabled="leagueCtrl.editCompetitor"
+                                                        ng-click="leagueCtrl.setInactive(competitor._id)"
+                                                        class="btn-danger">
+                                                    Remove
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <button ng-click="leagueCtrl.hideCompetitors();
+                             leagueCtrl.emailWarning = false; leagueCtrl.emailOutput = '';
+                             leagueCtrl.compWarning = false; leagueCtrl.compOutput = '';"
+                                        class="btn-primary btn-lg pull-right">
+                                    Return to Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End of Competitors Functionality-->
+                    <div class="row" ng-if="leagueCtrl.standings">
+                        <h2><strong>League Standings</strong></h2>
+                        <div class="container-fluid">
+                            <div class="row content" ng-if="leagueCtrl.hasLeagueCompetitors">
+                                <table class="table table-striped table-responsive league_fixed_table">
+                                    <thead>
+                                    <tr>
+                                        <th class="col-md-2"><strong>Rank</strong></th>
+                                        <th class="col-md-2"><strong>Name</strong></th>
+                                        <th class="col-md-2"><strong>Tournaments Played</strong></th>
+                                        <th class="col-md-1"><strong>Wins</strong></th>
+                                        <th class="col-md-1"><strong>Losses</strong></th>
+                                        <th class="col-md-2"><strong>Draws</strong></th>
+                                        <th class="col-md-2"><strong>Rating</strong></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="comp in leagueCtrl.findLeagueCompetitors">
+                                        <td class="col-md-2">{{$index + 1}}</td>
+                                        <td class="col-md-2">{{comp.name}}</td>
+                                        <td class="col-md-2">
+                                            {{comp.tournamentsPlayed === null ? 0 : comp.tournamentsPlayed}}
+                                        </td>
+                                        <td class="col-md-1">{{comp.totalWins === null ? 0 : comp.totalWins}}</td>
+                                        <td class="col-md-1">{{comp.totalLosses === null ? 0 : comp.totalLosses}}</td>
+                                        <td class="col-md-2">{{comp.totalDraws === null ? 0 : comp.totalDraws}}</td>
+                                        <td class="col-md-2">{{comp.ELO === null ? "N/A" : comp.ELO}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

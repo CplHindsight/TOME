@@ -1,0 +1,243 @@
+<div ng-controller="doubleEliminationController as doubleCtrl">
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <!--Navbar-->
+            <div class="col-md-2 sidenav well">
+                <div ng-show="doubleCtrl.isLeague" class="row">
+                    <h4><a href="league/tournament/{{doubleCtrl.url}}">Tournament Summary</a></h4>
+                </div>
+                <div ng-hide="doubleCtrl.isLeague" class="row">
+                    <h4><a href="/tournament/{{doubleCtrl.url}}">Tournament Summary</a></h4>
+                </div>
+                <div class="row">
+                    <h4><a href="/tournament/{{doubleCtrl.url}}/standings">Standings</a></h4>
+                </div>
+                <div class="row">
+                    <h4><a href="{{doubleCtrl.currentStageURL()}}">Go To Current Stage</a></h4>
+                </div>
+                <div ng-show="doubleCtrl.isLeague" class="row">
+                    <h4><a href="/league/{{doubleCtrl.leagueURL}}">Return to League</a></h4>
+                </div>
+                <div ng-if="currentUser" class="row">
+                    <h4><a href="/dashboard">Main Dashboard</a></h4>
+                </div>
+            </div>
+            <div class="col-md-10 text-left">
+                <div class="container-fluid">
+                    <div ng-if="!doubleCtrl.hasMatches">
+                        <div class="row content">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <i class="fa fa-spinner fa-spin spinner_load"></i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <h3>***Please wait while the tournament brackets load***</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="doubleCtrl.hasMatches">
+                        <div class="container-fluid">
+                            <div class="row content">
+                                <button class="btn btn-primary fa fa-long-arrow-left"
+                                        ng-disabled="!doubleCtrl.checkPrevStage()"
+                                        ng-click="doubleCtrl.prevStage()"></button>&nbsp;
+                                <span><strong>Stage: {{doubleCtrl.currStage}}</strong></span>&nbsp;
+                                <button class="btn btn-primary fa fa-long-arrow-right"
+                                        ng-disabled="!doubleCtrl.checkNextStage()"
+                                        ng-click="doubleCtrl.nextStage()"></button>
+                                <button class="btn btn-primary fa fa-long-arrow-left"
+                                        ng-disabled="!doubleCtrl.checkPrevRound()"
+                                        ng-click="doubleCtrl.prevRound()"></button>&nbsp;
+                                <span><strong>Round: {{doubleCtrl.currRound}}</strong></span>&nbsp;
+                                <button class="btn btn-primary fa fa-long-arrow-right"
+                                        ng-disabled="!doubleCtrl.checkNextRound()"
+                                        ng-click="doubleCtrl.nextRound()"></button>
+                                <button class="btn btn-sm btn-primary btn-push-right"
+                                        ng-disabled="doubleCtrl.showUpperBrackets()"
+                                        ng-click="doubleCtrl.switchBracketView(0)">
+                                    <strong>Upper Bracket</strong>
+                                </button>&nbsp;
+                                <button class="btn btn-sm btn-primary"
+                                        ng-disabled="doubleCtrl.showLowerBrackets()"
+                                        ng-click="doubleCtrl.switchBracketView(1)">
+                                    <strong>Lower Bracket</strong>
+                                </button>&nbsp;
+                            </div>
+                        </div><br>
+                        <div class="container-fluid">
+                            <div class="row content">
+                                <div class="btn-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <strong>Select Stage</strong>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu scrollable-menu">
+                                            <li ng-repeat="s in doubleCtrl.getAllStageRounds | filter: {round: 1}"
+                                                ng-click="doubleCtrl.goToStage(s.stage)">
+                                                <a>
+                                                    Stage: {{s.stage}}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <strong>Select Round</strong>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu scrollable-menu">
+                                            <li ng-repeat="s in doubleCtrl.getAllStageRounds | filter: {stage: doubleCtrl.currStage}"
+                                                ng-click="doubleCtrl.goToRound(s.round)">
+                                                <a>
+                                                    Round: {{s.round}}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row scroll_div" >
+                            <!--Upper Bracket-->
+                            <h3 ng-if="doubleCtrl.upperBracketView"><strong>Upper Bracket</strong></h3>
+                            <div class="col-md-8" ng-if="doubleCtrl.upperBracketView"
+                                 ng-repeat="match in doubleCtrl.findUpperMatches | filter: match.roundMatchNumber">
+                                <table class="table-condensed table-responsive bracketTable">
+                                    <tr>
+                                        <td class="col-md-5">
+                                            <div class="input-group">
+                                                <div class="form-control">
+                                                    <strong>{{doubleCtrl.getName(match.competitor1Id)}}</strong>
+                                                </div>
+                                                <span class="input-group-addon"
+                                                      ng-click="doubleCtrl.selectMatchWinner(match.competitor1Id, match)">
+                                                <a ng-if="doubleCtrl.canModify">
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                </a>
+                                            </span>
+                                            </div>
+                                        </td>
+                                        <td class="col-md-2" rowspan="2"
+                                            style="padding:0px; position:relative; min-width:50px;">
+                                            <div class="bracketLineA"></div>
+                                            <div class="bracketLineB"></div>
+                                            <div class="bracketLineC"></div>
+                                        </td>
+                                        <td class="col-md-5" rowspan="2">
+                                            <div class="input-group">
+                                                <div ng-if="match.winnerId" class="form-control">
+                                                    <strong>{{doubleCtrl.getName(match.winnerId)}}</strong>
+                                                </div>
+                                                <div ng-if="!match.winnerId" class="form-control"></div>
+                                                <span class="input-group-addon"></span>
+                                            </div>
+                                        </td>
+                                        <td class="col-md-4" rowspan="2" ng-if="doubleCtrl.displayWinner()">
+                                            <span style="font-size: 20px"><strong>***Winner***</strong></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="form-control">
+                                                    <strong>{{doubleCtrl.getName(match.competitor2Id)}}</strong>
+                                                </div>
+                                                <span class="input-group-addon"
+                                                      ng-click="doubleCtrl.selectMatchWinner(match.competitor2Id, match)">
+                                                    <a ng-if="doubleCtrl.canModify">
+                                                        <span class="glyphicon glyphicon-ok"></span>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!--Upper Bracket Temporary Data Warning-->
+                            <div class="alert alert-warning"
+                                 ng-if="doubleCtrl.findUpperTemporaryMatches && doubleCtrl.upperBracketView">
+                                <strong>Note: </strong> Please complete the lower bracket to advance.
+                            </div>
+
+                            <!--Lower Bracket-->
+                            <h3 ng-if="doubleCtrl.lowerBracketView"><strong>Lower Bracket</strong></h3>
+                            <div class="col-md-8" ng-if="doubleCtrl.lowerBracketView"
+                                 ng-repeat="match in doubleCtrl.findLowerMatches | filter: match.roundMatchNumber">
+                                <table class="table-condensed table-responsive bracketTable">
+                                    <tr>
+                                        <td class="col-md-5">
+                                            <div class="input-group">
+                                                <div class="form-control">
+                                                    <strong>{{doubleCtrl.getName(match.competitor1Id)}}</strong>
+                                                </div>
+                                                <span class="input-group-addon"
+                                                      ng-click="doubleCtrl.selectMatchWinner(match.competitor1Id, match)">
+                                                <a>
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                </a>
+                                            </span>
+                                            </div>
+                                        </td>
+                                        <td class="col-md-2" rowspan="2"
+                                            style="padding:0px; position:relative; min-width:50px;">
+                                            <div class="bracketLineA"></div>
+                                            <div class="bracketLineB"></div>
+                                            <div class="bracketLineC"></div>
+                                        </td>
+                                        <td class="col-md-5" rowspan="2">
+                                            <div class="input-group">
+                                                <div ng-if="match.winnerId || match.winnerId === null" class="form-control">
+                                                    <strong>{{doubleCtrl.getName(match.winnerId)}}</strong>
+                                                </div>
+                                                <div ng-if="match.winnerId === undefined" class="form-control"></div>
+                                                <span class="input-group-addon"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="form-control">
+                                                    <strong>{{doubleCtrl.getName(match.competitor2Id)}}</strong>
+                                                </div>
+                                                <span class="input-group-addon"
+                                                      ng-click="doubleCtrl.selectMatchWinner(match.competitor2Id, match)">
+                                                <a>
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                </a>
+                                            </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid"
+                         ng-if="doubleCtrl.canModify && !doubleCtrl.isFinished && doubleCtrl.countUnfinishedMatches === 0 &&
+                     doubleCtrl.hasMatches">
+                        <div class="row">
+                            <button ng-if="!doubleCtrl.isLastRound"
+                                    ng-click="doubleCtrl.startNextRound()"
+                                    class="btn btn-lg btn-success pull-right">
+                                Proceed to Next Round
+                            </button>
+                            <button ng-if="!doubleCtrl.isFinished && doubleCtrl.isLastRound"
+                                    ng-click="doubleCtrl.endTournament()" class="btn btn-lg btn-success pull-right">
+                                Complete Tournament
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

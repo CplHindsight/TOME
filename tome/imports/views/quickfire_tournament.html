@@ -1,0 +1,93 @@
+<div ng-controller="quickfireController as qfCtrl">
+    <div class="container-fluid text-center">
+
+        <!--Basic Tournament Setup-->
+        <div class="row content">
+            <div class="col-md-2 sidenav well">
+                <div class="row">
+                    <h4><a href="/dashboard">Main Dashboard</a></h4>
+                </div>
+            </div>
+            <div class="col-md-10 text-left">
+                <div class="row content">
+                    <div class="col-md-12">
+                        <h2><strong>Quickfire Tournament</strong></h2>
+                    </div>
+                </div>
+                <br>
+                <div class="row content">
+                    <div class="col-md-12">
+                        <form>
+                            <h3><strong>Tournament Details</strong></h3><br>
+
+                            <div class="row content">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        <strong>Number of Competitors: <span class="mandatory_fields">*</span></strong>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="radio" name="data.group0" value="8"
+                                               ng-model="qfCtrl.tournament.maxCompetitors"
+                                               class="radio-inline"/>
+                                        <span>8 competitors</span><br>
+                                        <input type="radio" name="data.group0" value="16"
+                                               ng-model="qfCtrl.tournament.maxCompetitors"
+                                               class="radio-inline"/>
+                                        <span>16 competitors</span>
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="radio" name="data.group0" value="32"
+                                               ng-model="qfCtrl.tournament.maxCompetitors"
+                                               class="radio-inline"/>
+                                        <span>32 competitors</span><br>
+                                        <input type="radio" name="data.group0" value="64"
+                                               ng-model="qfCtrl.tournament.maxCompetitors"
+                                               class="radio-inline"/>
+                                        <span>64 competitors</span>
+
+                                    </div>
+                                </div>
+                            </div><br>
+
+                            <div class="row content">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        <strong>Tournament Type: <span class="mandatory_fields">*</span></strong>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input type="radio" name="data.group1" value="Single Elimination"
+                                               ng-model="qfCtrl.stageArray[0].type"
+                                               class="radio-inline" ng-click="qfCtrl.typeFlag = 0;"/>
+                                        <span>Single Elimination</span><br>
+                                        <input type="radio" name="data.group1" value="Double Elimination"
+                                               ng-model="qfCtrl.stageArray[0].type"
+                                               class="radio-inline" ng-click="qfCtrl.typeFlag = 0;"/>
+                                        <span>Double Elimination</span><br>
+                                        <div ng-if="qfCtrl.typeFlag === 1">
+                                            <br>
+                                            <div class="alert alert-warning">
+                                                <strong>Warning: </strong> You must choose a tournament type.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <br><br>
+                <button ng-click="qfCtrl.submitQuickfire()" class="btn-success btn-lg pull-right">
+                    Begin Tournament
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

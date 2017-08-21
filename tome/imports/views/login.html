@@ -1,0 +1,26 @@
+<div ng-controller="loginController as loginCtrl">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>What is TOME?</h2>
+                <br>
+                <p>{{loginCtrl.description}}</p>
+            </div>
+            <div class="col-md-6">
+                <h2>Where to start?</h2>
+                <br>
+                <p>Learn about our application by clicking the <span><strong><a href="/help">Help Link</a></strong></span>
+                     here, sign in above to take advantage of all TOME offers, or create a quick tournament by clicking
+                    the Quickfire Tournament button</p>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <br><br>
+                <button class="btn-primary btn-lg center-block"
+                        ng-click="loginCtrl.beginQuickfire()">QUICKFIRE TOURNAMENT</button>
+            </div>
+        </div>
+    </div>
+</div>

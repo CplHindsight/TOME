@@ -1,0 +1,22 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="/">
+</head>
+
+<body ng-app="tome" ng-strict-di="">
+    <div id="main">
+        <!--Template for Header/Footer-->
+        <navigation class="navbar navbar-static-top"></navigation>
+        <div id="mainView" ng-view="" class="container-fluid"></div>
+
+        <!--<footer class="well navbar navbar-default navbar-fixed-bottom text-center">
+            <a href="/about"><strong>About</strong></a><br>Copyright 2017 - TOME</p>
+        </footer>-->
+        <footer class="well text-center">
+            <a href="/about"><strong>About</strong></a>
+            <br><strong>Copyright 2017 - TOME</strong>
+        </footer>
+    </div>
+</body>

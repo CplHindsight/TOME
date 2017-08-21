@@ -1,0 +1,9 @@
+import '../imports/models/tournaments.js';
+import '../imports/models/tournamentCompetitors.js';
+import '../imports/models/stages.js';
+import '../imports/models/matches.js';
+import '../imports/models/leagues.js';
+import '../imports/models/leagueCompetitors.js';
+import '../imports/models/dblElim_tempMatches';
+import '../imports/startup/accounts/email-templates.js';
+import './accounts.js';

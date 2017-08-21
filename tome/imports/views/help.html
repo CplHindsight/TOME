@@ -1,0 +1,332 @@
+<div ng-controller="helpController as hCtrl">
+    <div class="container-fluid text-center">
+        <div class="col-md-2 sidenav well">
+            <div class="row">
+                <h4 ng-click="hCtrl.selectType('t'); hCtrl.selectInfo('a');"><a>Tournament Help</a></h4>
+                <h4 ng-click="hCtrl.selectType('l'); hCtrl.selectInfo('f');"><a>League Help</a></h4>
+                <br>
+            </div>
+            <div class="row">
+                <h4><a href="/dashboard">Previous Screen</a></h4>
+            </div>
+        </div>
+        <div class="col-md-10 text-left">
+            <div class="row">
+                <div class="col-md-12" ng-if="hCtrl.showTournamentHelp">
+                    <div class="col-md-3">
+                        <h2><strong>Tournaments</strong></h2>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Select an option:</h4>
+                                <br>
+                                <ol style="list-style-type: none">
+                                    <li><a ng-click="hCtrl.selectInfo('a')">Tournament Types</a></li>
+                                    <li><a ng-click="hCtrl.selectInfo('b')">Creating Tournaments</a></li>
+                                    <li><a ng-click="hCtrl.selectInfo('c')">Controlling Tournament Competitors</a></li>
+                                    <li><a ng-click="hCtrl.selectInfo('d')">Coordinators</a></li>
+                                    <li><a ng-click="hCtrl.selectInfo('e')">Tournament Standings</a></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9 scroll_info_div">
+                        <div ng-if="hCtrl.tournamentType">
+                            <h3><strong>Tournament Types</strong></h3>
+                            <p>There are 4 different types of tournaments that can be run as part of TOME:</p>
+                            <ol>
+                                <li>Single Elimination</li>
+                                <li>Double Elimination</li>
+                                <li>Round Robin</li>
+                                <li>Multilevel</li>
+                            </ol>
+                            <h5><strong>Single Elimination</strong></h5>
+                            <p>Single elimination tournaments are constructed as follows:</p>
+                            <ul>
+                                <li>Competitors are set in pairings of two.</li>
+                                <li>If there are an uneven amount of participants, some competitors will be
+                                    paired with a "BYE", giving them an automatic round win.</li>
+                                <li>The winner of each pairing will move on to the next round of the
+                                    tournament.</li>
+                                <li>If a competitor loses their round, they are eliminated from the
+                                    tournament.</li>
+                                <li>The tournament will continue until there is a single winner.</li>
+                            </ul>
+                            <h5><strong>Double Elimination</strong></h5>
+                            <p>Double elimination tournaments are constructed as follows:</p>
+                            <ul>
+                                <li>There are two brackets in double elimination, <strong>UPPER</strong>
+                                    and <strong>LOWER</strong>.</li>
+                                <li>Competitors are set in pairings of two in the upper bracket of the tournament.</li>
+                                <li>If there are an uneven amount of participants, some competitors will be
+                                    paired with a "BYE", giving them an automatic round win.</li>
+                                <li>The winner of each pairing will move to the next round of the tournament in the
+                                    upper bracket.</li>
+                                <li>The loser of the upper bracket will move to the lower bracket.</li>
+                                <li>The lower bracket rounds play similarly to that of a single elimination
+                                    tournament, where the winner moves on and the loser is eliminated.</li>
+                                <li>The upper bracket is structured to maintain a similar round level as the
+                                    lower bracket, which means at points the upper bracket will wait for
+                                    lower bracket round completion.</li>
+                                <li>The winner of the tournament is determined between the winner of the upper
+                                    bracket and the winner of the lower bracket.</li>
+                            </ul>
+                            <h5><strong>Round Robin</strong> - Requires a registered account</h5>
+                            <p>Round Robin tournaments are constructed as follows:</p>
+                            <ul>
+                                <li>Round Robin tournaments have a maximum competitor amount of 32.</li>
+                                <li>Competitors are set in pairings of two.</li>
+                                <li>Competitors will play each other competitor in the tournament once.</li>
+                                <li>Points are recorded in the standings of the tournament.</li>
+                                <li>The competitor with the highest point total will win the tournament</li>
+                                <li>Round robin tournaments can have additional stages added
+                                    (see additional stage selection below).</li>
+                            </ul>
+                            <h5><strong>Multilevel</strong> - Requires a registered account</h5>
+                            <p>Multilevel tournaments are constructed as follows:</p>
+                            <ul>
+                                <li>The organizer sets the number of rounds for the stage. It is recommended
+                                    that the number of rounds be approximately 30% of the total number of
+                                    competitors, and not exceed the number of players minus one.</li>
+                                <li>Competitors are set in pairings of two.</li>
+                                <li>Competitors will be paired based on their current record.</li>
+                                <li>Pairings are done to avoid having competitors play multiple times.</li>
+                                <li>Points are recorded in the standings of the tournament.</li>
+                                <li>The competitor with the highest point total will win the tournament.</li>
+                                <li>Multilevel tournaments can have additional stages added
+                                    (see additional stage selection below).</li>
+                            </ul>
+                        </div>
+                        <div ng-if="hCtrl.createTournament">
+                            <h3><strong>Creating a Tournament</strong></h3>
+                            <p>To create a tournament follow the instructions listed below:</p>
+                            <ol>
+                                <li>Click the Create Tournament option in the left navigation bar on the main
+                                    dashboard.</li>
+                                <li>Fill in the required fields for the tournament marked by the
+                                    <span class="mandatory_fields">*</span> symbol.</li>
+                                <li>Select the type of tournament to create.</li>
+                                <li>Select any additional stage options that may be required. The options are
+                                    explained below.</li>
+                            </ol>
+                            <h5><strong>Additional Stages</strong></h5>
+                            <p>When selecting a Round Robin or Multilevel style tournament, there are some
+                                extra options to select from.</p>
+                            <p>Organizers can run up to a total of 3 stages in a single tournament,
+                                combining multiple types of tournaments together.</p>
+                            <p>For example, a user can run the following tournament combinations:</p>
+                            <ul style="list-style-type: none">
+                                <li>Round Robin <span class="fa fa-long-arrow-right"></span> Single Elimination </li>
+                                <li>Multilevel <span class="fa fa-long-arrow-right"></span> Round Robin <span
+                                        class="fa fa-long-arrow-right"></span> Double Elimination</li>
+                            </ul>
+                            <p>Each of the options below define the number of competitors that
+                                are selected to move forward to the next stage of a tournament.</p>
+                            <ol>
+                                <li>No Cutoff
+                                    <ul>
+                                        <li>All competitors move on to the next stage of the tournament no
+                                            matter their current standings at the end of the stage.</li>
+                                    </ul>
+                                </li>
+                                <li>Half Cutoff
+                                    <ul>
+                                        <li>The top 50% of competitors move on to the next stage based on their
+                                            current standings at the end of the stage.</li>
+                                    </ul>
+                                </li>
+                                <li>Other
+                                    <ul>
+                                        <li>The organizer of the tournament must define the number of competitors
+                                            that will move forward to the next stage.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <p>The user is directed to the Tournament Summary page upon completion of creating a
+                                tournament.</p>
+                        </div>
+                        <div ng-if="hCtrl.tournamentCompetitors">
+                            <h3><strong>Controlling Tournament Competitors</strong></h3>
+                            <h5><strong>To add competitors to a tournament:</strong></h5>
+                            <ol>
+                                <li>Click the button in the bottom right corner or select Control Tournament
+                                    Competitors from the left navigation bar</li>
+                                <li>Add competitors to the tournament
+                                    <ul>
+                                        <li>Competitors require a valid name and email</li>
+                                        <li>Competitors may be added individually or through a CSV file</li>
+                                        <li>If loading through a CSV file, column A should contain the name of
+                                            the competitor and column B should contain the email of the competitor.</li>
+                                        <li>No header should be included in either column of the CSV file.</li>
+                                    </ul>
+                                </li>
+                                <li>Competitors may be added until the maximum competitor limit is reached that
+                                    was defined during tournament creation.</li>
+                                <li>Competitors may be edited or deleted after being added to the tournament list.</li>
+                            </ol>
+                        </div>
+                        <div ng-if="hCtrl.tournamentCoordinators">
+                            <h3><strong>The Role of Coordinators</strong></h3>
+                            <p>Coordinators are individuals designated by the tournament organizer to have some
+                                administrative rights over a single tournament that has been created by the organizer.</p>
+                            <p>Organizers are provided both a URL and coordinator password that is created
+                                uniquely for each tournament on the tournament summary page.</p>
+                            <p>Coordinators can do the following within an assigned tournament:</p>
+                            <ul>
+                                <li>Update a match result.</li>
+                                <li>Start a tournament.</li>
+                                <li>Start and end a round.</li>
+                                <li>Add/remove competitors.</li>
+                            </ul>
+                            <p>League tournaments do not have coordinators and therefore all League tournament results
+                                must be controlled by the League organizer.</p>
+                        </div>
+                        <div ng-if="hCtrl.tournamentStandings">
+                            <h3><strong>Tournament Standings</strong></h3>
+                            <p>Users can view tournament standings at any point during a tournament.</p>
+                            <p>Points are awarded to competitors as determined by the following rules:</p>
+                            <ul>
+                                <li>3 points to the winner of a match.</li>
+                                <li>0 points to the loser of a match.</li>
+                                <li>1 point in the case of a tie.</li>
+                            </ul>
+                            <p>Points are used as a measure to determine who moves on if additional options
+                                are selected during tournament creation.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" ng-if="hCtrl.showLeagueHelp">
+                    <div class="col-md-3">
+                        <h2><strong>Leagues</strong></h2>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Select an option:</h4>
+                                <br>
+                                <ol style="list-style-type: none">
+                                    <li><a ng-click="hCtrl.selectInfo('f')">Creating a League</a></li>
+                                    <li><a ng-click="hCtrl.selectInfo('g')">Controlling League Competitors</a></li>
+                                    <li><a ng-click="hCtrl.selectInfo('h')">Creating League Tournaments</a></li>
+                                    <li><a ng-click="hCtrl.selectInfo('i')">League Standings</a></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9 scroll_info_div">
+                        <div ng-if="hCtrl.createLeague">
+                            <h3><strong>Creating a League</strong></h3>
+                            <p>Requires a registered account to access any league functionality.</p>
+                            <p>To create a league follow the instructions listed below:</p>
+                            <ol>
+                                <li>Click the Create League option in the left navigation bar on the main
+                                    dashboard.</li>
+                                <li>Fill in the required name field for the league on the main dashboard view</li>
+                            </ol>
+                            <p>The user is directed to the League Dashboard page upon submission of a league
+                                name.</p>
+                        </div>
+                        <div ng-if="hCtrl.leagueCompetitors">
+                            <h3><strong>Controlling Competitors in a League/League Tournament</strong></h3>
+                            <p>There is a maximum limit of 128 competitors that can be added to a League.</p>
+                            <h5><strong>To add competitors to a league:</strong></h5>
+                            <ol>
+                                <li>Select Control League Competitors from the left navigation bar</li>
+                                <li>Add competitors to the League
+                                    <ul>
+                                        <li>Competitors require a valid name and email</li>
+                                        <li>Competitors may be added individually or through a CSV file</li>
+                                        <li>If loading through a CSV file, column A should contain the name of
+                                            the competitor and column B should contain the email of the competitor.</li>
+                                        <li>No header should be included in either column of the CSV file.</li>
+                                    </ul>
+                                </li>
+                                <li>Competitors may be added until the maximum competitor limit is reached.</li>
+                                <li>Competitors may be edited or deleted after being added to the league.</li>
+                            </ol>
+                            <h5><strong>To add competitors to a league tournament:</strong></h5>
+                            <ol>
+                                <li>Click the button in the bottom right corner or choose Select Tournament
+                                    Competitors from the left navigation bar.</li>
+                                <li>Add competitors to the tournament by selecting enroll or withdraw next to
+                                    each competitor.</li>
+                                <li>Competitors may be added until the maximum competitor limit is reached that
+                                    was defined during tournament creation, or until the maximum limit of the league
+                                    has been reached.</li>
+                            </ol>
+                        </div>
+                        <div ng-if="hCtrl.leagueTournaments">
+                            <h3><strong>Creating a League Tournament</strong></h3>
+                            <p>To create a tournament in a league follow the instructions listed below:</p>
+                            <ol>
+                                <li>Ensure that competitors are loaded into the league competitor pool.</li>
+                                <li>Click the Create League Tournament option in the left navigation bar on the league
+                                    dashboard.</li>
+                                <li>Fill in the required fields for the tournament marked by the
+                                    <span class="mandatory_fields">*</span> symbol.</li>
+                                <li>Select the type of tournament to create.</li>
+                                <li>Select any additional stage options that may be required. The options are
+                                    explained below.</li>
+                            </ol>
+                            <h5><strong>Additional Stages</strong></h5>
+                            <p>When selecting a Round Robin or Multilevel style tournament, there are some
+                                extra options to select from.</p>
+                            <p>Organizers can run up to a total of 3 stages in a single tournament,
+                                combining multiple types of tournaments together.</p>
+                            <p>For example, a user can run the following tournament combinations:</p>
+                            <ul style="list-style-type: none">
+                                <li>Round Robin <span class="fa fa-long-arrow-right"></span> Single Elimination </li>
+                                <li>Multilevel <span class="fa fa-long-arrow-right"></span> Round Robin <span
+                                        class="fa fa-long-arrow-right"></span> Double Elimination</li>
+                            </ul>
+                            <p>Each of the options below define the number of competitors that
+                                are selected to move forward to the next stage of a tournament.</p>
+                            <ol>
+                                <li>No Cutoff
+                                    <ul>
+                                        <li>All competitors move on to the next stage of the tournament no
+                                            matter their current standings at the end of the stage.</li>
+                                    </ul>
+                                </li>
+                                <li>Half Cutoff
+                                    <ul>
+                                        <li>The top 50% of competitors move on to the next stage based on their
+                                            current standings at the end of the stage.</li>
+                                    </ul>
+                                </li>
+                                <li>Other
+                                    <ul>
+                                        <li>The organizer of the tournament must define the number of competitors
+                                            that will move forward to the next stage.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <p>The user is directed to the League Tournament Summary page upon completion of creating
+                                a tournament.</p>
+                        </div>
+                        <div ng-if="hCtrl.leagueStandings">
+                            <h3><strong>League and League Tournament Standings</strong></h3>
+                            <h5><strong>League Tournament Standings</strong></h5>
+                            <p>Users can view tournament standings at any point during a tournament.</p>
+                            <p>Points are awarded to competitors as determined by the following rules:</p>
+                            <ul>
+                                <li>3 points to the winner of a match.</li>
+                                <li>0 points to the loser of a match.</li>
+                                <li>1 point in the case of a tie.</li>
+                            </ul>
+                            <p>Points are used as a measure to determine who moves on if additional options
+                                are selected during tournament creation.</p>
+                            <h5><strong>League Standings</strong></h5>
+                            <p>Users can view tournament standings at any point from the league dashboard.</p>
+                            <p>League standings are similar to that of tournament standings, but also list the
+                                following:</p>
+                            <ul>
+                                <li>Tournaments Played - shows the number of tournaments a competitor has played
+                                    within the league</li>
+                                <li>Rating - shows the rating used to calculate more efficient match pairings in
+                                    future tournaments</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

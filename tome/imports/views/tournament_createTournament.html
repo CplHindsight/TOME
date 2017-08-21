@@ -1,0 +1,187 @@
+<div ng-controller="createTournamentController as createTCtrl">
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <div class="col-md-2 sidenav well">
+                <div class="row">
+                    <h4><a href="/dashboard">Main Dashboard</a></h4>
+                </div>
+            </div>
+            <div class="col-md-10 text-left">
+                <div class="row content">
+                    <div class="col-md-12">
+                        <h2><strong>Create New Tournament</strong></h2>
+                    </div>
+                </div>
+                <div class="row" ng-if="createTCtrl.incompleteWarning">
+                    <div class="col-md-12 alert alert-warning">
+                        <strong>Warning: </strong>Please fill in all required fields correctly.
+                    </div>
+                </div>
+                <br>
+                <div class="row content">
+                    <div class="col-md-12">
+                        <form>
+                            <h3><strong>Tournament Details</strong></h3><br>
+                            <div class="col-md-6">
+                                <label>Tournament Name:<span class="mandatory_fields"> *</span></label>
+                                <input id="tName" type="text" ng-model="createTCtrl.tournament.name"
+                                       ng-change="createTCtrl.incompleteWarning = false;"
+                                       class="form-control"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Max # of Competitors:<span class="mandatory_fields"> *</span></label>
+                                <input id="tMax" type="number" min="2"
+                                       max="4096"  ng-change="createTCtrl.incompleteWarning = false;"
+                                       class="textWidth form-control"
+                                       ng-model="createTCtrl.tournament.maxCompetitors"
+                                       ng-readonly="createTCtrl.freeze === 1"/>
+                            </div>
+                            <br><br>
+                            <div class="row content">
+                                <div class="col-md-12">
+                                    <h3><strong>Stage Details</strong></h3><br>
+                                    <div class="col-md-12">
+                                        <strong>Stage Number: </strong>{{createTCtrl.stageNum + 1}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row content">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        <strong>Tournament Type:<span class="mandatory_fields"> *</span></strong>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input type="radio" name="data.group1" value="Single Elimination"
+                                               ng-model="createTCtrl.stageArray[createTCtrl.stageNum].type"
+                                               class="radio-inline" ng-click="createTCtrl.typeFlag = 0;"
+                                               ng-change="createTCtrl.incompleteWarning = false;"/>
+                                        <span>Single Elimination</span><br>
+                                        <input type="radio" name="data.group1" value="Double Elimination"
+                                               ng-model="createTCtrl.stageArray[createTCtrl.stageNum].type"
+                                               class="radio-inline" ng-click="createTCtrl.typeFlag = 0;"
+                                               ng-change="createTCtrl.incompleteWarning = false;"/>
+                                        <span>Double Elimination</span><br>
+                                        <input type="radio" name="data.group1" value="Multilevel"
+                                               ng-model="createTCtrl.stageArray[createTCtrl.stageNum].type"
+                                               class="radio-inline" ng-click="createTCtrl.typeFlag = 0;"
+                                               ng-change="createTCtrl.incompleteWarning = false;"/>
+                                        <span>Multilevel</span><br>
+                                        <input type="radio" name="data.group1" value="Round Robin"
+                                               ng-model="createTCtrl.stageArray[createTCtrl.stageNum].type"
+                                               class="radio-inline" ng-click="createTCtrl.typeFlag = 0;"
+                                               ng-if="createTCtrl.tournament.maxCompetitors <= 32"
+                                               ng-change="createTCtrl.incompleteWarning = false;"/>
+                                        <span ng-if="createTCtrl.tournament.maxCompetitors <= 32">
+                                            Round Robin
+                                        </span><br>
+                                        <div ng-if="createTCtrl.typeFlag === 1">
+                                            <br>
+                                            <div class="alert alert-warning">
+                                                <strong>Warning: </strong> You must choose a type.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row content"
+                                 ng-show="createTCtrl.stageArray[createTCtrl.stageNum].type === 'Multilevel'">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        <strong># of Rounds:</strong>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input id="tRounds" type="number" min="1" class="form-control textWidth"
+                                               ng-model="createTCtrl.stageArray[createTCtrl.stageNum].rounds"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row content" ng-show="createTCtrl.stageNum < 2"
+                                 ng-hide="createTCtrl.stageArray[createTCtrl.stageNum].type === 'Single Elimination'
+                                 || createTCtrl.stageArray[createTCtrl.stageNum].type === 'Double Elimination'
+                                 || createTCtrl.stageArray[createTCtrl.stageNum].type === null
+                                 || createTCtrl.stageNum === 2">
+                                <div class="col-md-12">
+                                    <h3><strong>Additional Stage Options</strong></h3>
+                                    <p>If no additional stages are required, select "Create Tournament" below.</p><br>
+                                    <div ng-if="createTCtrl.optFlag === 1">
+                                        <div class="alert alert-warning">
+                                            <strong>Warning: </strong>
+                                            An option must be chosen to create an additional stage.
+                                        </div>
+                                    </div>
+                                    <div class="row content">
+                                        <div class="col-md-12">
+                                            <div class="col-md-2">
+                                                <strong>Cutoff Options:</strong>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <input name="nextStage" type="radio" value="n"
+                                                       ng-click="createTCtrl.optFlag = 0; createTCtrl.numFlag = 0;
+                                                       createTCtrl.showOther = false;"
+                                                       ng-model="createTCtrl.stageArray[createTCtrl.stageNum].cutoffCriteria"/>
+                                                <span>No Cutoff</span><br>
+                                                <input name="nextStage" type="radio" value="p"
+                                                       ng-click="createTCtrl.optFlag = 0; createTCtrl.numFlag = 0;
+                                                       createTCtrl.showOther = false;"
+                                                       ng-model="createTCtrl.stageArray[createTCtrl.stageNum].cutoffCriteria"/>
+                                                <span>Half</span><br>
+                                                <input name="nextStage" type="radio" value="o"
+                                                       ng-click="createTCtrl.optFlag = 0; createTCtrl.numFlag = 0;
+                                                       createTCtrl.showOther = true;"
+                                                       ng-model="createTCtrl.stageArray[createTCtrl.stageNum].cutoffCriteria"/>
+                                                <span>Other</span><br>
+                                                <div class="col-md-4" ng-if="createTCtrl.showOther">
+                                                    <div class="spacing"></div>
+                                                    <label># of Competitors:</label><br>
+                                                    <input ng-model="createTCtrl.stageArray[createTCtrl.stageNum].cutoffNumber"
+                                                           type="number" class="form-control"
+                                                           ng-click="createTCtrl.optFlag = 0; createTCtrl.numFlag = 0;"/>
+                                                </div>
+                                                <div ng-if="createTCtrl.numFlag === 1">
+                                                    <br>
+                                                    <div class="alert alert-warning">
+                                                        <strong>Warning: </strong>
+                                                        Please select a range between 2 and {{createTCtrl.tournament.maxCompetitors}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row content">
+                                <div class="col-md-12">
+                                    <div class="spacing"></div><br>
+                                    <button type="reset" class="btn btn-primary" ng-click="createTCtrl.reset()">
+                                        Reset Tournament
+                                    </button>
+                                    <button ng-show="createTCtrl.stageNum > 0" ng-click="createTCtrl.prevStage()"
+                                            class="btn btn-primary">
+                                        Previous Stage
+                                    </button>
+                                    <button ng-click="createTCtrl.nextStage()" ng-show="createTCtrl.stageNum < 2"
+                                            ng-hide="createTCtrl.stageArray[createTCtrl.stageNum].type == 'Single Elimination'
+                                            || createTCtrl.stageArray[createTCtrl.stageNum].type == 'Double Elimination'
+                                            || createTCtrl.stageArray[createTCtrl.stageNum].type === null
+                                            || createTCtrl.stageNum === 2"
+                                            class="btn btn-primary">
+                                        Next Stage
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <br><br>
+                <button type="submit" ng-click="createTCtrl.submit()" class="btn-success btn-lg pull-right">
+                    Create Tournament
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

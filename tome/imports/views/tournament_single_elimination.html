@@ -1,0 +1,171 @@
+<div ng-controller="singleEliminationController as singleCtrl">
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <!--Navbar-->
+            <div class="col-md-2 sidenav well">
+                <div ng-show="singleCtrl.isLeague" class="row">
+                    <h4><a href="league/tournament/{{singleCtrl.url}}">Tournament Summary</a></h4>
+                </div>
+                <div ng-hide="singleCtrl.isLeague" class="row">
+                    <h4><a href="/tournament/{{singleCtrl.url}}">Tournament Summary</a></h4>
+                </div>
+                <div class="row">
+                    <h4><a href="/tournament/{{singleCtrl.url}}/standings">Standings</a></h4>
+                </div>
+                <div class="row">
+                    <h4><a href="{{singleCtrl.currentStageURL()}}">Go To Current Stage</a></h4>
+                </div>
+                <div ng-show="singleCtrl.isLeague" class="row">
+                    <h4><a href="/league/{{singleCtrl.leagueURL}}">Return to League</a></h4>
+                </div>
+                <div ng-if="currentUser" class="row">
+                    <h4><a href="/dashboard">Main Dashboard</a></h4>
+                </div>
+            </div>
+            <div class="col-md-10 text-left">
+                <div class="container-fluid">
+                    <div ng-if="!singleCtrl.hasMatches">
+                        <div class="row content">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <i class="fa fa-spinner fa-spin spinner_load"></i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <h3>***Please wait while the tournament brackets load***</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="singleCtrl.hasMatches">
+                        <div class="container-fluid">
+                            <div class="row content">
+                                <button class="btn btn-primary fa fa-long-arrow-left"
+                                        ng-disabled="!singleCtrl.checkPrevStage()"
+                                        ng-click="singleCtrl.prevStage()"></button>&nbsp;
+                                <span><strong>Stage: {{singleCtrl.currStage}}</strong></span>&nbsp;
+                                <button class="btn btn-primary fa fa-long-arrow-right"
+                                        ng-disabled="!singleCtrl.checkNextStage()"
+                                        ng-click="singleCtrl.nextStage()"></button>
+                                <button class="btn btn-primary fa fa-long-arrow-left"
+                                        ng-disabled="!singleCtrl.checkPrevRound()"
+                                        ng-click="singleCtrl.prevRound()"></button>&nbsp;
+                                <span><strong>Round: {{singleCtrl.currRound}}</strong></span>&nbsp;
+                                <button class="btn btn-primary fa fa-long-arrow-right"
+                                        ng-disabled="!singleCtrl.checkNextRound()"
+                                        ng-click="singleCtrl.nextRound()"></button>&nbsp;
+                            </div>
+                        </div><br>
+                        <div class="container-fluid">
+                            <div class="row content">
+                                <div class="btn-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <strong>Select Stage</strong>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu scrollable-menu">
+                                            <li ng-repeat="s in singleCtrl.getAllStageRounds | filter: {round: 1}"
+                                                ng-click="singleCtrl.goToStage(s.stage)">
+                                                <a>
+                                                    Stage: {{s.stage}}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <strong>Select Round</strong>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu scrollable-menu">
+                                            <li ng-repeat="s in singleCtrl.getAllStageRounds | filter: {stage: singleCtrl.currStage}"
+                                                ng-click="singleCtrl.goToRound(s.round)">
+                                                <a>
+                                                    Round: {{s.round}}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row scroll_div" >
+                            <div class="col-md-8" ng-repeat="match in singleCtrl.findMatches | filter: match.roundMatchNumber">
+                                <table class="table-condensed table-responsive bracketTable">
+                                    <tr>
+                                        <td class="col-md-5">
+                                            <div class="input-group">
+                                                <div class="form-control">
+                                                    <strong>{{singleCtrl.getName(match.competitor1Id)}}</strong>
+                                                </div>
+                                                <span class="input-group-addon"
+                                                      ng-click="singleCtrl.selectMatchWinner(match.competitor1Id, match)">
+                                                <a ng-if="singleCtrl.canModify" >
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                </a>
+                                            </span>
+                                            </div>
+                                        </td>
+                                        <td class="col-md-2" rowspan="2"
+                                            style="padding:0px; position:relative; min-width:50px;">
+                                            <div class="bracketLineA"></div>
+                                            <div class="bracketLineB"></div>
+                                            <div class="bracketLineC"></div>
+                                        </td>
+                                        <td class="col-md-5" rowspan="2">
+                                            <div class="input-group">
+                                                <div ng-if="match.winnerId" class="form-control">
+                                                    <strong>{{singleCtrl.getName(match.winnerId)}}</strong>
+                                                </div>
+                                                <div ng-if="!match.winnerId" class="form-control"></div>
+                                                <span class="input-group-addon"></span>
+                                            </div>
+                                        </td>
+                                        <td class="col-md-4" rowspan="2" ng-if="singleCtrl.displayWinner()">
+                                            <span style="font-size: 20px"><strong>***Winner***</strong></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="form-control">
+                                                    <strong>{{singleCtrl.getName(match.competitor2Id)}}</strong>
+                                                </div>
+                                                <span class="input-group-addon"
+                                                      ng-click="singleCtrl.selectMatchWinner(match.competitor2Id, match)">
+                                                <a ng-if="singleCtrl.canModify">
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                </a>
+                                            </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid"
+                         ng-if="singleCtrl.canModify && !singleCtrl.isFinished &&
+                         singleCtrl.countUnfinishedMatches === 0 && singleCtrl.hasMatches">
+                        <div class="row">
+                            <button ng-if="!singleCtrl.isLastRound"
+                                    ng-click="singleCtrl.startNextRound()"
+                                    class="btn btn-lg btn-success pull-right">
+                                Proceed to Next Round
+                            </button>
+                            <button ng-if="!singleCtrl.isFinished && singleCtrl.isLastRound"
+                                    ng-click="singleCtrl.endTournament()" class="btn btn-lg btn-success pull-right">
+                                Complete Tournament
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
